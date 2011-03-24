@@ -38,7 +38,6 @@ import lu.sven.epcmodeler.mouse.NodeMenu;
 import lu.sven.epcmodeler.mouse.PopupVertexEdgeMenuMousePlugin;
 import lu.sven.epcmodeler.util.SaveGraph;
 import lu.sven.epcmodeler.util.Transformers;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
@@ -50,7 +49,8 @@ public class EPCModeler {
 	private static List<InetAddress> peers = new LinkedList<InetAddress>();
 	private static Logger logger = Logger.getRootLogger();
 	public static List<Node> receivedNodes = new LinkedList<Node>(); 
-	public static List<Edge> receivedEdges = new LinkedList<Edge>(); 
+	public static List<Edge> receivedEdges = new LinkedList<Edge>();
+	public static StaticLayout<Node, Edge> layout;
 	
 	/**
 	 * @param args
@@ -92,7 +92,7 @@ public class EPCModeler {
 		EPCViewer sgv = new EPCViewer();
 		
         // Layout<Node, Edge>, VisualizationViewer<Node,Edge>
-        Layout<Node, Edge> layout = new StaticLayout<Node, Edge>(EPCViewer.EPCGraph, Transformers.locationTransformer);
+        layout = new StaticLayout<Node, Edge>(EPCViewer.EPCGraph, Transformers.locationTransformer);
         layout.setSize(new Dimension(700,700));
         
         // Start the HTTP Server
