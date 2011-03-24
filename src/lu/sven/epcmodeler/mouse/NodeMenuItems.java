@@ -34,7 +34,7 @@ public class NodeMenuItems {
 			if (n.getNodeType() == NodeType.EVENT) this.setSelected(true);
 			this.setText("Event");
 			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
+			vv.getRenderContext().getScreenDevice().repaint();
 		}
 		
 	}

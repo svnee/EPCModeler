@@ -20,7 +20,7 @@ public class ChangeNodeType extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.n.setNodeType(this.t);	
+		this.n.setNodeType(this.t);
 		EPCModeler.pushToPeers(n.toGML(), "/updateNode");
 	}
 }
