@@ -20,8 +20,6 @@ public class NodeUtil {
 				break;
 			}
 		}
-		
 		return returnNode;
-		
 	}
 }
