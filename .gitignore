@@ -3,4 +3,4 @@ config.props
 .project
 .settings/*
 logs/logger.log
-bin/**/* 
+bin/**/*.class 
