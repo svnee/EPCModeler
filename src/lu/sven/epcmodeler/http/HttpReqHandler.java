@@ -85,6 +85,23 @@ public class HttpReqHandler implements HttpRequestHandler {
             		writer.flush();
             	}    
             });
+        } else if(target.equals("/addEdge")) {
+            	Edge e = new Edge(postContent);
+            	EPCModeler.receivedEdges.add(e);
+            	if(!this.graph.getEdges().contains(e)) {
+            		// FIND NODE BY ID
+            		//this.graph.addEdge(e, e.source, e.dest)
+                	logger.debug("Edge inserted");
+            	}
+            	response.setStatusCode(HttpStatus.SC_OK);
+                // generate output
+                body = new EntityTemplate(new ContentProducer() {
+                	public void writeTo(final OutputStream outstream) throws IOException {
+                		OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+                		writer.write("Computers are useless. They can only give you answers. --Pablo Picasso");
+                		writer.flush();
+                	}    
+                });
         } else if(target.equals("/rmNode")) {
         	this.graph.removeVertex(new Node(postContent));
         	
