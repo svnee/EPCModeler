@@ -8,6 +8,7 @@ import java.util.Locale;
 import lu.sven.epcmodeler.EPCModeler;
 import lu.sven.epcmodeler.graph.Edge;
 import lu.sven.epcmodeler.graph.Node;
+import lu.sven.epcmodeler.util.NodeUtil;
 import lu.sven.epcmodeler.util.Transformers;
 
 import org.apache.http.HttpEntity;
@@ -89,8 +90,7 @@ public class HttpReqHandler implements HttpRequestHandler {
             	Edge e = new Edge(postContent);
             	EPCModeler.receivedEdges.add(e);
             	if(!this.graph.getEdges().contains(e)) {
-            		// FIND NODE BY ID
-            		//this.graph.addEdge(e, e.source, e.dest)
+            		this.graph.addEdge(e, NodeUtil.getNodeById(e.source, this.graph), NodeUtil.getNodeById(e.dest, this.graph));
                 	logger.debug("Edge inserted");
             	}
             	response.setStatusCode(HttpStatus.SC_OK);
