@@ -1,6 +1,6 @@
 config.props
-/bin
 .classpath
 .project
 .settings/*
-/logs
+logs/logger.log
+bin/**/* 
