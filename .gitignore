@@ -1,1 +1,5 @@
 config.props
+bin/*
+.classpath
+.project
+.settings/*
