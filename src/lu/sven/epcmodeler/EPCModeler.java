@@ -187,7 +187,7 @@ public class EPCModeler {
 		} else if(!accessString.equals("private")) {
 			allowedPeers = EPCModeler.peers;
 		} else {
-			allowedPeers = null;
+			allowedPeers = new LinkedList<InetAddress>();
 		}
 		
 		for(InetAddress ia : allowedPeers) {
