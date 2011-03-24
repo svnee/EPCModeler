@@ -28,13 +28,11 @@ public class NodeMenuItems {
 
 		@Override
 		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
-			Action changeNodeType = new ChangeNodeType(n, NodeType.EVENT);
+			Action changeNodeType = new ChangeNodeType(n, NodeType.EVENT, vv);
 			//n.setLabel("event["+n.getID()+"]");
 			this.setAction(changeNodeType);
 			if (n.getNodeType() == NodeType.EVENT) this.setSelected(true);
-			this.setText("Event");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.getRenderContext().getScreenDevice().repaint();
+			this.setText("Event");			
 		}
 		
 	}
@@ -45,12 +43,10 @@ public class NodeMenuItems {
 		@Override
 		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
 			if (n.getNodeType() == NodeType.FUNCTION) this.setSelected(true);
-			Action changeNodeType = new ChangeNodeType(n, NodeType.FUNCTION);
+			Action changeNodeType = new ChangeNodeType(n, NodeType.FUNCTION, vv);
 			//n.setLabel("function["+n.getID()+"]");
 			this.setAction(changeNodeType);
 			this.setText("Function");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}
@@ -61,12 +57,10 @@ public class NodeMenuItems {
 		@Override
 		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
 			if (n.getNodeType() == NodeType.OPERATOR_AND) this.setSelected(true);
-			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_AND);
+			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_AND, vv);
 			//n.setLabel("AND");
 			this.setAction(changeNodeType);
 			this.setText("AND operator");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}
@@ -77,12 +71,10 @@ public class NodeMenuItems {
 		@Override
 		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
 			if (n.getNodeType() == NodeType.OPERATOR_OR) this.setSelected(true);
-			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_OR);
+			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_OR, vv);
 			//n.setLabel("OR");
 			this.setAction(changeNodeType);
 			this.setText("OR operator");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}
@@ -93,12 +85,10 @@ public class NodeMenuItems {
 		@Override
 		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
 			if (n.getNodeType() == NodeType.OPERATOR_XOR) this.setSelected(true);
-			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_XOR);
+			Action changeNodeType = new ChangeNodeType(n, NodeType.OPERATOR_XOR, vv);
 			//n.setLabel("XOR");
 			this.setAction(changeNodeType);
 			this.setText("XOR operator");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}
@@ -112,8 +102,6 @@ public class NodeMenuItems {
 			Action changeNodeVisibility = new ChangeNodeVisibility(n, NodeVisibility.VISIBLE);
 			this.setAction(changeNodeVisibility);
 			this.setText("Visible");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}
@@ -127,8 +115,6 @@ public class NodeMenuItems {
 			Action changeNodeVisibility = new ChangeNodeVisibility(n, NodeVisibility.INVISIBLE);
 			this.setAction(changeNodeVisibility);
 			this.setText("Invisible");
-			// BUG: Repaint seems not to work, they need to click first
-			vv.repaint();
 		}
 		
 	}

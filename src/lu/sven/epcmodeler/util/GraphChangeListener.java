@@ -1,5 +1,7 @@
 package lu.sven.epcmodeler.util;
 
+import java.awt.geom.Point2D;
+
 import lu.sven.epcmodeler.EPCModeler;
 import lu.sven.epcmodeler.EPCViewer;
 import lu.sven.epcmodeler.graph.Edge;
@@ -16,8 +18,7 @@ public class GraphChangeListener implements GraphEventListener<Node, Edge> {
 		case VERTEX_ADDED:
 			GraphEvent.Vertex<Node, Edge> event = (GraphEvent.Vertex<Node, Edge>) evt;
 			Node n = event.getVertex();
-			// TODO: get position and set it
-			// n.setPoint();
+			n.setPoint(new Point2D.Double(EPCModeler.layout.getX(n), EPCModeler.layout.getY(n)));
 			if(!EPCModeler.receivedNodes.contains(n)) {
 				EPCModeler.pushToPeers(n.toGML(), "/addNode");
 			}
