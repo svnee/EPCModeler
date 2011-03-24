@@ -116,7 +116,13 @@ public class HttpReqHandler implements HttpRequestHandler {
             });
         } else if(target.equals("/updateNode")) {
         	Node n = new Node(postContent);
-        	this.graph.removeVertex(n);
+        	try {
+        		this.graph.removeVertex(n);
+        	} catch (Exception e) {
+        		// not found
+        		// TODO: debug
+        	}
+        	
         	this.graph.addVertex(n);
         	
         	response.setStatusCode(HttpStatus.SC_OK);

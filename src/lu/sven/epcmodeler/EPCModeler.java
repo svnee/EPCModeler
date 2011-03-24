@@ -36,6 +36,7 @@ import lu.sven.epcmodeler.mouse.CreateMenu;
 import lu.sven.epcmodeler.mouse.EdgeMenu;
 import lu.sven.epcmodeler.mouse.NodeMenu;
 import lu.sven.epcmodeler.mouse.PopupVertexEdgeMenuMousePlugin;
+import lu.sven.epcmodeler.util.NodeUtil;
 import lu.sven.epcmodeler.util.SaveGraph;
 import lu.sven.epcmodeler.util.Transformers;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -183,7 +184,7 @@ public class EPCModeler {
 		}
 		
 		if(!accessString.equals("") && !accessString.equals("public") && !accessString.equals("private")) {
-			// TODO: parse String to allowedPeers
+			allowedPeers = NodeUtil.getAllowedPeers(accessString);
 		} else if(!accessString.equals("private")) {
 			allowedPeers = EPCModeler.peers;
 		} else {

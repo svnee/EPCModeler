@@ -42,19 +42,19 @@ public class NodeMenu extends JPopupMenu {
         
         this.addSeparator();
         
-        JMenuItem titleVisibility = new JMenuItem("Visibility of the node:");
+        JMenuItem titleVisibility = new JMenuItem("Privacy of the node:");
         titleVisibility.setEnabled(false);
         this.add(titleVisibility);
         
         ButtonGroup grp2 = new ButtonGroup();
         
-        AbstractButton setVisible = new NodeMenuItems.setVisible();
-        grp2.add(setVisible);
-        this.add(setVisible);
+        AbstractButton setPublic = new NodeMenuItems.setPublic();
+        grp2.add(setPublic);
+        this.add(setPublic);
         
-        AbstractButton setInvisible = new NodeMenuItems.setInvisible();
-        grp2.add(setInvisible);
-        this.add(setInvisible);
+        AbstractButton setPrivate = new NodeMenuItems.setPrivate();
+        grp2.add(setPrivate);
+        this.add(setPrivate);
         
         this.addSeparator();
         

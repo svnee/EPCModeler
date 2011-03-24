@@ -8,6 +8,7 @@ import lu.sven.epcmodeler.graph.Edge;
 import lu.sven.epcmodeler.graph.Node;
 import lu.sven.epcmodeler.graph.NodeType;
 import lu.sven.epcmodeler.graph.NodeVisibility;
+import lu.sven.epcmodeler.mouse.actions.ChangeNodeAccess;
 import lu.sven.epcmodeler.mouse.actions.ChangeNodeType;
 import lu.sven.epcmodeler.mouse.actions.ChangeNodeVisibility;
 import lu.sven.epcmodeler.mouse.actions.DeleteNode;
@@ -130,6 +131,32 @@ public class NodeMenuItems {
 			
 			// BUG: Repaint seems not to work, they need to click first
 			vv.repaint();
+		}
+		
+	}
+	
+	public static class setPublic extends JRadioButtonMenuItem implements NodeMenuListener<Node> {
+		private static final long serialVersionUID = 2035152788576851606L;
+
+		@Override
+		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
+			if (n.getAccess().equals("public")) this.setSelected(true);
+			Action changeNodeAccess = new ChangeNodeAccess(n, "public");
+			this.setAction(changeNodeAccess);
+			this.setText("Public");	
+		}
+		
+	}
+	
+	public static class setPrivate extends JRadioButtonMenuItem implements NodeMenuListener<Node> {
+		private static final long serialVersionUID = 1701015805754710877L;
+
+		@Override
+		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
+			if (n.getAccess().equals("private")) this.setSelected(true);
+			Action changeNodeAccess = new ChangeNodeAccess(n, "private");
+			this.setAction(changeNodeAccess);
+			this.setText("Private");	
 		}
 		
 	}

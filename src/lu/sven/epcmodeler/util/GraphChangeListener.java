@@ -18,13 +18,15 @@ public class GraphChangeListener implements GraphEventListener<Node, Edge> {
 		case VERTEX_ADDED:
 			GraphEvent.Vertex<Node, Edge> event = (GraphEvent.Vertex<Node, Edge>) evt;
 			Node n = event.getVertex();
-
+			
 			n.setPoint(new Point2D.Double(EPCModeler.layout.getX(n), EPCModeler.layout.getY(n)));
-
+			
 			if(!EPCModeler.receivedNodes.contains(n)) {
 				EPCModeler.pushToPeers(n.toGML(), "/addNode");
 			}
+			
 			break;
+			
 		case EDGE_ADDED:
 			GraphEvent.Edge<Node, Edge> edge_event = (GraphEvent.Edge<Node, Edge>) evt;
 			Edge e = edge_event.getEdge();

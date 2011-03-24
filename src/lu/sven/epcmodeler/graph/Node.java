@@ -197,6 +197,10 @@ public class Node implements Comparable<Node>{
 		gml += "</node>";
 		return gml;
 	}
+
+	public void setAccess(String _access) {
+		this.accessType = _access;		
+	}
 	
 
 }
