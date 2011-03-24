@@ -45,6 +45,7 @@ public class EPCModeler {
 	private static List<InetAddress> peers = new LinkedList<InetAddress>();
 	private static Logger logger = Logger.getRootLogger();
 	public static List<Node> receivedNodes = new LinkedList<Node>(); 
+	public static List<Edge> receivedEdges = new LinkedList<Edge>(); 
 	
 	/**
 	 * @param args
