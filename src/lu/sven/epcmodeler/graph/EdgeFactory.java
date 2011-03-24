@@ -22,7 +22,6 @@ public class EdgeFactory implements Factory<Edge> {
 		try {
 			id = "EDGE::"+NetworkUtils.getMacAddress() + "::" + edgeCount;
 		} catch (SocketException e) {
-			// TODO: log the error on WARN
 			id = "EDGE::nil::" + edgeCount;
 		}
         String ts = new Long(System.currentTimeMillis() / 1000).toString();

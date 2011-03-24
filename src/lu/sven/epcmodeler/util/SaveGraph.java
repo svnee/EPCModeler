@@ -69,14 +69,10 @@ public class SaveGraph implements Action {
 	}
 
 	@Override
-	public void addPropertyChangeListener(PropertyChangeListener arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void addPropertyChangeListener(PropertyChangeListener arg0) {}
 
 	@Override
 	public Object getValue(String arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -86,20 +82,11 @@ public class SaveGraph implements Action {
 	}
 
 	@Override
-	public void putValue(String arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void putValue(String arg0, Object arg1) {}
 
 	@Override
-	public void removePropertyChangeListener(PropertyChangeListener arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void removePropertyChangeListener(PropertyChangeListener arg0) {}
 
 	@Override
-	public void setEnabled(boolean arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setEnabled(boolean arg0) {}
 }

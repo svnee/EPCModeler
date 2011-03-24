@@ -11,7 +11,7 @@ import org.apache.commons.collections15.Factory;
 public class NodeFactory implements Factory<Node> {
 	private static int nodeCount = 0;
 	private static NodeType defaultNodeType = NodeType.EVENT;
-	private static String defaultAccessType = "public";
+	private static String defaultAccessType = "private";
 	private static NodeVisibility defaultState = NodeVisibility.VISIBLE;
 	private static Point defaultPosition = new Point(0,0);
 	private static Dimension defaultDimension = new Dimension(90,30);
@@ -40,7 +40,6 @@ public class NodeFactory implements Factory<Node> {
 			}
 			id = "NODE::" + uuid + "::" + nodeCount;
 		} catch (SocketException e) {
-			// TODO: log the error on WARN
 			id = "NODE::nil::" + nodeCount;
 		}
         String ts = new Long(System.currentTimeMillis() / 1000).toString();

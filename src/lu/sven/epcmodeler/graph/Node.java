@@ -178,10 +178,8 @@ public class Node implements Comparable<Node>{
 			this.nodeDimension = new Dimension(90,30);
 			
 		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

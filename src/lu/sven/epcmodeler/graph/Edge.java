@@ -54,10 +54,8 @@ public class Edge {
 			this.dest = root.getAttributeValue("target");
 			this.id = source + "->" + dest;
 		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

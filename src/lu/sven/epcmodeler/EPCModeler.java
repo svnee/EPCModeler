@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
@@ -22,6 +23,10 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 import lu.sven.epcmodeler.graph.Edge;
 import lu.sven.epcmodeler.graph.Node;
@@ -78,7 +83,6 @@ public class EPCModeler {
 			Object k = p.get(o);
 			try {
 				peers.add(InetAddress.getByName((String)k));
-				// TODO: add logging
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
@@ -157,10 +161,38 @@ public class EPCModeler {
 	}
 	
 	public static void pushToPeers(String gml, String target) {
-		for(InetAddress ia : EPCModeler.peers) {
+		List<InetAddress> allowedPeers = new LinkedList<InetAddress>();
+		SAXBuilder parser = new SAXBuilder();
+		String accessString = "";
+		try {
+			Document doc = parser.build(new StringReader(gml));
+			Element root = doc.getRootElement();
+			for (Object e : root.getChildren()) {
+				Element f = (Element)e;
+				if(f.getName().equals("data")) {
+					String key = f.getAttribute("key").getValue();
+					if(key.equals("access")) {
+						accessString = f.getValue();
+					}
+				}
+			}
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(!accessString.equals("") && !accessString.equals("public") && !accessString.equals("private")) {
+			// TODO: parse String to allowedPeers
+		} else if(!accessString.equals("private")) {
+			allowedPeers = EPCModeler.peers;
+		} else {
+			allowedPeers = null;
+		}
+		
+		for(InetAddress ia : allowedPeers) {
 			try {
-				@SuppressWarnings("unused")
-				HTTPClient client = new HTTPClient(ia.getHostName(), target, gml);
+				new HTTPClient(ia.getHostName(), target, gml);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
