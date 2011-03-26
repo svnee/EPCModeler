@@ -2,13 +2,16 @@ package lu.sven.epcmodeler.mouse;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import lu.sven.epcmodeler.mouse.actions.NodeChangeAccess;
 
 public class NodeMenu extends JPopupMenu {
 	private static final long serialVersionUID = 8020436658882767609L;
 
-	public NodeMenu() {
+	public NodeMenu(final JFrame frame) {
         super("Node Menu");
         this.add(new NodeMenuItems.IDDisplay());
         
@@ -55,6 +58,10 @@ public class NodeMenu extends JPopupMenu {
         AbstractButton setPrivate = new NodeMenuItems.setPrivate();
         grp2.add(setPrivate);
         this.add(setPrivate);
+        
+        AbstractButton setGroup = new NodeChangeAccess(frame);
+        grp2.add(setGroup);
+        this.add(setGroup);
         
         this.addSeparator();
         

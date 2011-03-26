@@ -126,7 +126,7 @@ public class EPCModeler {
         PopupVertexEdgeMenuMousePlugin<Node, Edge> mousePlugin = new PopupVertexEdgeMenuMousePlugin<Node, Edge>();
         // Add some popup menus for the edges and vertices to our mouse plugin.
         JPopupMenu edgeMenu = new EdgeMenu(frame);
-        JPopupMenu nodeMenu = new NodeMenu();
+        JPopupMenu nodeMenu = new NodeMenu(frame);
         JPopupMenu createMenu = new CreateMenu(frame);
         mousePlugin.setCreatePopup(createMenu);
         mousePlugin.setEdgePopup(edgeMenu);
