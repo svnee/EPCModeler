@@ -7,6 +7,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import lu.sven.epcmodeler.mouse.actions.NodeChangeAccess;
+import lu.sven.epcmodeler.mouse.actions.NodeChangeLabel;
 
 public class NodeMenu extends JPopupMenu {
 	private static final long serialVersionUID = 8020436658882767609L;
@@ -14,6 +15,15 @@ public class NodeMenu extends JPopupMenu {
 	public NodeMenu(final JFrame frame) {
         super("Node Menu");
         this.add(new NodeMenuItems.IDDisplay());
+        
+        this.addSeparator();
+        
+        JMenuItem label = new NodeMenuItems.LabelDisplay();
+        label.setEnabled(false);
+        this.add(label);
+        
+        AbstractButton setLabel = new NodeChangeLabel(frame);
+        this.add(setLabel);
         
         this.addSeparator();
         

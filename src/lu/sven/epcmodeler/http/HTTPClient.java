@@ -26,6 +26,7 @@ public class HTTPClient {
 	private String responseString;
 	
 	   public HTTPClient(String hostn, String target, final String POSTContent) throws Exception {
+		   // TODO: handle TIMEOUT!!!
 		   HttpClient httpclient = new DefaultHttpClient();
 		   responseString="";
 		   ContentProducer cp = new ContentProducer() {

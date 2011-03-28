@@ -22,7 +22,6 @@ public class EPCViewer {
     /** Creates a new instance of SimpleGraphView */
     public EPCViewer() {
     	// Check if a cached version exists  
-    	// TODO: Ask peers for graph!
     	File fp = new File("cache.xml");
     	if (fp.exists()) {
     		EPCGraph = LoadGraph.load();

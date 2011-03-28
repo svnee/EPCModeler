@@ -24,6 +24,15 @@ public class NodeMenuItems {
 		}
     }
 	
+	public static class LabelDisplay extends JMenuItem implements NodeMenuListener<Node> {
+		private static final long serialVersionUID = 792389276684856523L;
+
+		@Override
+		public void setVertexAndView(Node n, VisualizationViewer<Node, Edge> vv) {
+			this.setText("Label: "+ n.getLabel());		
+		}
+    }
+	
 	public static class setEventType extends JRadioButtonMenuItem implements NodeMenuListener<Node> {
 		private static final long serialVersionUID = -6663216929189379362L;
 

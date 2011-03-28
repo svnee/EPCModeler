@@ -48,8 +48,15 @@ public class NodeAccessDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(vGroup);
     }
 	private void okButtonHandler(java.awt.event.ActionEvent evt) {
+		String ola = node.getAccess();
 		node.setAccess(this.jTextField1.getText());
-		EPCModeler.pushToPeers(node.toGML(), "/updateNode");
+		if(node.getAccess().equals("public") && !ola.equals("public")) {
+			EPCModeler.pushToPeers(node.toGML(), "/addNode");
+		} else if(node.getAccess().equals("private") && ola.equals("public")) {
+			EPCModeler.pushToPeers(node.toGML(), "/rmNode");
+		} else {
+			EPCModeler.pushToPeers(node.toGML(), "/updateNode");
+		}
 		dispose();
 	}
 }

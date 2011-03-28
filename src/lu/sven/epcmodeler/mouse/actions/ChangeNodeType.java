@@ -25,6 +25,17 @@ public class ChangeNodeType extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		switch(this.t) {
+		case OPERATOR_AND: 
+			this.n.setLabel("∧"); 
+			break;
+		case OPERATOR_OR: 
+			this.n.setLabel("V"); 
+			break;
+		case OPERATOR_XOR:
+			this.n.setLabel("XOR");
+			break;
+		}
 		this.n.setNodeType(this.t);
 		EPCModeler.pushToPeers(n.toGML(), "/updateNode");
 		this.vv.repaint();
