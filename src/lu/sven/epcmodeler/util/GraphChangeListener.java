@@ -34,8 +34,11 @@ public class GraphChangeListener implements GraphEventListener<Node, Edge> {
 			Node start = EPCViewer.EPCGraph.getSource(e);
 			e.source = start.getID();
 			e.dest = start.getID();
+			
 			String gml = "<edge source=\""+start.getID()+"\" target=\""+dest.getID()+"\" />";
-			EPCModeler.pushToPeers(gml, "/addEdge");
+			if(!EPCModeler.receivedEdges.contains(e)) {
+				EPCModeler.pushToPeers(gml, "/addEdge");
+			}
 			break;
 		}
 	}

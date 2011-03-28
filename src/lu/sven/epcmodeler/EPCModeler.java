@@ -309,10 +309,12 @@ public class EPCModeler {
 		ias = EPCModeler.peers;
 		InetAddress returnIa= null;
 		String nodeSize="0";
+		String peerNodeSize = "0";
 		for(InetAddress ia : ias) {
 			try {
 				HTTPClient httpClient = new HTTPClient(ia.getHostName(), "/getNodeSize", "");
-				String peerNodeSize = httpClient.getResponseString();
+				peerNodeSize = httpClient.getResponseString();
+				
 				if(Integer.getInteger(peerNodeSize)>Integer.getInteger(nodeSize)){
 					nodeSize=peerNodeSize;
 					returnIa = ia;

@@ -43,7 +43,7 @@ public class HTTPClient {
 			HttpResponse response = httpclient.execute(httppost);
 			logger.debug(response.toString());
 			
-InputStream is = response.getEntity().getContent();
+			InputStream is = response.getEntity().getContent();
 			
 			Writer writer = new StringWriter();
 			char[] buffer = new char[1024];

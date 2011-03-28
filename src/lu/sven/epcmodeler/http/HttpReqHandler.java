@@ -93,6 +93,7 @@ public class HttpReqHandler implements HttpRequestHandler {
             		this.graph.addEdge(e, NodeUtil.getNodeById(e.source, this.graph), NodeUtil.getNodeById(e.dest, this.graph));
                 	logger.debug("Edge inserted");
             	}
+            	
             	response.setStatusCode(HttpStatus.SC_OK);
                 // generate output
                 body = new EntityTemplate(new ContentProducer() {
