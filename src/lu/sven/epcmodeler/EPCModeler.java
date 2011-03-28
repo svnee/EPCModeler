@@ -199,5 +199,24 @@ public class EPCModeler {
 			}
 		}
 	}
+	public static InetAddress getMaxNodeGraph(){
+		List<InetAddress> ias = new LinkedList<InetAddress>();
+		ias = EPCModeler.peers;
+		InetAddress returnIa= null;
+		String nodeSize="0";
+		for(InetAddress ia : ias) {
+			try {
+				HTTPClient httpClient = new HTTPClient(ia.getHostName(), "/getNodeSize", "");
+				String peerNodeSize = httpClient.getResponseString();
+				if(Integer.getInteger(peerNodeSize)>Integer.getInteger(nodeSize)){
+					nodeSize=peerNodeSize;
+					returnIa = ia;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return returnIa;
+	}
 
 }

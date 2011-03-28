@@ -172,7 +172,19 @@ public class HttpReqHandler implements HttpRequestHandler {
             		writer.flush();
             	}    
             });
-        } else {
+        } else if(target.equals("/getNodeSize")) {
+        	
+        	response.setStatusCode(HttpStatus.SC_OK);
+            // generate output
+            body = new EntityTemplate(new ContentProducer() {
+            	public void writeTo(final OutputStream outstream) throws IOException {
+            		OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
+            		String nodeSize = Integer.toString(graph.getVertexCount());
+            		writer.write(nodeSize);
+            		writer.flush();
+            	}    
+            });
+        }else {
         	response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
             // generate output
             body = new EntityTemplate(new ContentProducer() {
