@@ -1,0 +1,26 @@
+<2011-05-05 14:54:40> [INFO ] | EPCModeler : Starting the application
+<2011-05-05 14:54:40> [INFO ] | EPCModeler : Reading the configuration
+<2011-05-05 14:54:40> [INFO ] | EPCModeler : Get own IP address
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : read all NetworkInterfaces
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found NIC: name:vmnet8 (vmnet8) index: 9 addresses:
+/192.168.201.1;
+
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /192.168.201.1
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found NIC: name:vmnet1 (vmnet1) index: 8 addresses:
+/192.168.202.1;
+
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /192.168.202.1
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found NIC: name:en1 (en1) index: 5 addresses:
+/192.168.176.109;
+
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /192.168.176.109
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found NIC: name:lo0 (lo0) index: 1 addresses:
+/127.0.0.1;
+/fe80:0:0:0:0:0:0:1%1;
+/0:0:0:0:0:0:0:1;
+
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /127.0.0.1
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /fe80:0:0:0:0:0:0:1%1
+<2011-05-05 14:54:40> [INFO ] | NetworkUtils : Found IP: /0:0:0:0:0:0:0:1
+<2011-05-05 14:54:40> [INFO ] | EPCModeler : Get list of peers
+<2011-05-05 14:54:41> [INFO ] | RequestListenerThread : Listening on port 8080

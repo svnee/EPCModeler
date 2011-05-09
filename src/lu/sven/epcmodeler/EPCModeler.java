@@ -1,7 +1,10 @@
 package lu.sven.epcmodeler;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -9,15 +12,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import org.apache.commons.collections15.Transformer;
@@ -45,9 +52,11 @@ import lu.sven.epcmodeler.mouse.EdgeMenu;
 import lu.sven.epcmodeler.mouse.NodeMenu;
 import lu.sven.epcmodeler.mouse.PopupVertexEdgeMenuMousePlugin;
 import lu.sven.epcmodeler.util.GraphChangeListener;
+import lu.sven.epcmodeler.util.NetworkUtils;
 import lu.sven.epcmodeler.util.NodeUtil;
 import lu.sven.epcmodeler.util.SaveGraph;
 import lu.sven.epcmodeler.util.Transformers;
+import lu.sven.epcmodeler.util.getSubGraphs;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
@@ -72,6 +81,7 @@ public class EPCModeler {
 	public static List<Node> receivedNodes = new LinkedList<Node>(); 
 	public static List<Edge> receivedEdges = new LinkedList<Edge>();
 	public static StaticLayout<Node, Edge> layout;
+	public static int port;
 	
 	/**
 	 * @param args
@@ -82,7 +92,7 @@ public class EPCModeler {
 			PatternLayout layout = new PatternLayout( "<%d{yyyy-MM-dd HH:mm:ss}> [%-5p] | %-10C{1} : %m%n" );
 			ConsoleAppender consoleAppender = new ConsoleAppender( layout );
 			logger.addAppender( consoleAppender );
-			FileAppender fileAppender = new FileAppender( layout, "logs/logger.log", false );
+			FileAppender fileAppender = new FileAppender( layout, "logs/"+NetworkUtils.getMacAddress()+".log", false );
 			logger.addAppender( fileAppender );
 			// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
 			logger.setLevel( Level.ALL );
@@ -90,9 +100,12 @@ public class EPCModeler {
 			System.out.println( ex );
 		}
 		
+		logger.info("Starting the application");
+		
 		// Load list of peers
 		Properties p = new Properties();
 	    try {
+	    	logger.info("Reading the configuration");
 			p.load(new FileInputStream("config.props"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -100,13 +113,39 @@ public class EPCModeler {
 			e.printStackTrace();
 		}
 		
+		logger.info("Get own IP address");
+		HashSet<InetAddress> ownIPAddresses = new HashSet<InetAddress>();
+		try {
+			ownIPAddresses = NetworkUtils.getIPAddresses();
+		} catch (SocketException e1) {
+			e1.printStackTrace();
+		}
+		
+		logger.info("Get list of peers");
 		for(Object o : p.keySet()) {
 			Object k = p.get(o);
 			try {
-				peers.add(InetAddress.getByName((String)k));
+				InetAddress ia = InetAddress.getByName((String)k);
+				if (!ownIPAddresses.contains(ia)) {
+					peers.add(ia);
+				}
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		// Get port
+		Properties sp = new Properties();
+		try {
+			sp.load(new FileInputStream("port.props"));
+			for(Object o : sp.keySet()) {
+				Object k = sp.get(o);
+				EPCModeler.port = Integer.parseInt((String)k);
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		
 		// Start displaying the Viewer
@@ -119,80 +158,83 @@ public class EPCModeler {
 		Graph<Node, Edge> g;
 		HTTPClient httpClient;
 		try {
-			httpClient = new HTTPClient(update.getHostName(), "/getGraph", "");
-			String peerGraphGML = httpClient.getResponseString();
-			BufferedReader stringreader = new BufferedReader(new StringReader(peerGraphGML));
-			Transformer<GraphMetadata, Graph<Node, Edge>>
-			 graphTransformer = new Transformer<GraphMetadata,
-			                           Graph<Node, Edge>>() {
+			InetAddress updateHost = update;
+			if(updateHost != null) {
+				httpClient = new HTTPClient(updateHost.getHostName(), "/getGraph", "");
+				String peerGraphGML = httpClient.getResponseString();
+				BufferedReader stringreader = new BufferedReader(new StringReader(peerGraphGML));
+				Transformer<GraphMetadata, Graph<Node, Edge>>
+				 graphTransformer = new Transformer<GraphMetadata,
+				                           Graph<Node, Edge>>() {
 
-			   public Graph<Node, Edge>
-			       transform(GraphMetadata metadata) {
-			         metadata.getEdgeDefault();
-					if (metadata.getEdgeDefault().equals(
-			         EdgeDefault.DIRECTED)) {
-			             return new DirectedSparseMultigraph<Node, Edge>();
-			         } else {
-			             return new
-			             UndirectedSparseMultigraph<Node, Edge>();
-			         }
-			       }
-			 };
-			 
-			 /* Create the Vertex Transformer */
-			 Transformer<NodeMetadata, Node> vertexTransformer
-			 = new Transformer<NodeMetadata, Node>() {
-			     public Node transform(NodeMetadata metadata) {
-			    	 Node n =
-			             NodeFactory.getInstance().create();
-			         // Set the saved values
-			    	 n.setID(metadata.getId());
-			         n.setLabel(metadata.getProperty("label"));
-			         n.setNodeType(NodeType.valueOf(metadata.getProperty("type")));
-			         n.setState(NodeVisibility.valueOf(metadata.getProperty("state")));
-			         n.setTimeStamp(metadata.getProperty("timestamp"));
-			         // Set position
-			         Point2D p = new Point2D.Double(
-			        		 Double.parseDouble(metadata.getProperty("x")),
-			        		 Double.parseDouble(metadata.getProperty("y"))
-			         	);
-			         n.setPoint(p);
-			         
-			         return n;
-			     }
-			 };
-			 
-			 /* Create the Edge Transformer */
-			 Transformer<EdgeMetadata, Edge> edgeTransformer =
-			 new Transformer<EdgeMetadata, Edge>() {
-			     public Edge transform(EdgeMetadata metadata) {
-			    	 Edge e = EdgeFactory.getInstance().create();
-			         return e;
-			     }
-			 };
-			 
-			 // We do not have hyperedges, but it is needed by the interface
-			 Transformer<HyperEdgeMetadata, Edge> hyperEdgeTransformer =
-				 new Transformer<HyperEdgeMetadata, Edge>() {
-				     public Edge transform(HyperEdgeMetadata metadata) {
+				   public Graph<Node, Edge>
+				       transform(GraphMetadata metadata) {
+				         metadata.getEdgeDefault();
+						if (metadata.getEdgeDefault().equals(
+				         EdgeDefault.DIRECTED)) {
+				             return new DirectedSparseMultigraph<Node, Edge>();
+				         } else {
+				             return new
+				             UndirectedSparseMultigraph<Node, Edge>();
+				         }
+				       }
+				 };
+				 
+				 /* Create the Vertex Transformer */
+				 Transformer<NodeMetadata, Node> vertexTransformer
+				 = new Transformer<NodeMetadata, Node>() {
+				     public Node transform(NodeMetadata metadata) {
+				    	 Node n =
+				             NodeFactory.getInstance().create();
+				         // Set the saved values
+				    	 n.setID(metadata.getId());
+				         n.setLabel(metadata.getProperty("label"));
+				         n.setNodeType(NodeType.valueOf(metadata.getProperty("type")));
+				         n.setState(NodeVisibility.valueOf(metadata.getProperty("state")));
+				         n.setTimeStamp(metadata.getProperty("timestamp"));
+				         // Set position
+				         Point2D p = new Point2D.Double(
+				        		 Double.parseDouble(metadata.getProperty("x")),
+				        		 Double.parseDouble(metadata.getProperty("y"))
+				         	);
+				         n.setPoint(p);
+				         
+				         return n;
+				     }
+				 };
+				 
+				 /* Create the Edge Transformer */
+				 Transformer<EdgeMetadata, Edge> edgeTransformer =
+				 new Transformer<EdgeMetadata, Edge>() {
+				     public Edge transform(EdgeMetadata metadata) {
 				    	 Edge e = EdgeFactory.getInstance().create();
 				         return e;
 				     }
 				 };
-			
-			/* Create the graphMLReader2 */
-			GraphMLReader2<Graph<Node, Edge>, Node, Edge>
-			graphReader = new GraphMLReader2<Graph<Node, Edge>, Node, Edge>
-				(stringreader, graphTransformer, vertexTransformer,
-				edgeTransformer, hyperEdgeTransformer);
-			
-			try {
-			    /* Get the new graph object from the GraphML file */
-			    g = (DirectedGraph<Node, Edge>) graphReader.readGraph();
-			    EPCViewer.EPCGraph = new OurObservableGraph(g);
-			    GraphChangeListener gel = new GraphChangeListener();
-		    	((OurObservableGraph) EPCViewer.EPCGraph).addGraphEventListener(gel);			    
-			} catch (GraphIOException ex) {}
+				 
+				 // We do not have hyperedges, but it is needed by the interface
+				 Transformer<HyperEdgeMetadata, Edge> hyperEdgeTransformer =
+					 new Transformer<HyperEdgeMetadata, Edge>() {
+					     public Edge transform(HyperEdgeMetadata metadata) {
+					    	 Edge e = EdgeFactory.getInstance().create();
+					         return e;
+					     }
+					 };
+				
+				/* Create the graphMLReader2 */
+				GraphMLReader2<Graph<Node, Edge>, Node, Edge>
+				graphReader = new GraphMLReader2<Graph<Node, Edge>, Node, Edge>
+					(stringreader, graphTransformer, vertexTransformer,
+					edgeTransformer, hyperEdgeTransformer);
+				
+				try {
+				    /* Get the new graph object from the GraphML file */
+				    g = (DirectedGraph<Node, Edge>) graphReader.readGraph();
+				    EPCViewer.EPCGraph = new OurObservableGraph(g);
+				    GraphChangeListener gel = new GraphChangeListener();
+			    	((OurObservableGraph) EPCViewer.EPCGraph).addGraphEventListener(gel);			    
+				} catch (GraphIOException ex) {}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -203,7 +245,7 @@ public class EPCModeler {
         
         // Start the HTTP Server
 		@SuppressWarnings("unused")
-		HTTPServer server = new HTTPServer(EPCViewer.EPCGraph);
+		HTTPServer server = new HTTPServer(EPCViewer.EPCGraph, layout);
         
         VisualizationViewer<Node, Edge> vv = new VisualizationViewer<Node, Edge>(layout);
         vv.setPreferredSize(new Dimension(750,750));
@@ -223,7 +265,21 @@ public class EPCModeler {
         
         JFrame frame = new JFrame("EPC Modeler");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(vv);
+        frame.getContentPane().setLayout(new BorderLayout());
+        Container contentPane = frame.getContentPane();
+        contentPane.setLayout(new FlowLayout());
+        
+        // Create ListBox
+        String subject[] = {};
+        JPanel panel = new JPanel();
+        JList list = new JList(subject);
+        panel.add(list);
+        
+        JPanel vvPanel = new JPanel();
+        vvPanel.add(vv);
+        
+        frame.getContentPane().add(vvPanel);
+        frame.getContentPane().add(panel);
         
         // Create a graph mouse and add it to the visualization viewer
         EditingModalGraphMouse<Node, Edge> gm = new EditingModalGraphMouse<Node, Edge>(vv.getRenderContext(), sgv.vertexFactory, sgv.edgeFactory);
@@ -259,14 +315,29 @@ public class EPCModeler {
         modeMenu.setPreferredSize(new Dimension(80,20)); // Change the size so I can see the text
         
         menuBar.add(modeMenu);
+        
+        JMenu subGraphsMenu = new JMenu("SubGraphs");
+        JMenuItem b = new JMenuItem();
+        getSubGraphs getgraphs = new getSubGraphs(list);
+        b.setAction(getgraphs);
+        b.setText("Update List");
+        subGraphsMenu.add(b);
+        
+        menuBar.add(subGraphsMenu);
+        
         frame.setJMenuBar(menuBar);
         gm.setMode(ModalGraphMouse.Mode.EDITING); // Start off in editing mode
         frame.pack();
-        frame.setVisible(true); 
+        frame.setVisible(true);
+        
 
 	}
 	
-	public static void pushToPeers(String gml, String target) {
+	public static void pushToPeers(String gml, String target) {		
+		// First save to cache
+		SaveGraph saver = new SaveGraph(layout);
+		saver.save();
+		
 		List<InetAddress> allowedPeers = new LinkedList<InetAddress>();
 		SAXBuilder parser = new SAXBuilder();
 		String accessString = "";
@@ -307,6 +378,9 @@ public class EPCModeler {
 	public static InetAddress getMaxNodeGraph(){
 		List<InetAddress> ias = new LinkedList<InetAddress>();
 		ias = EPCModeler.peers;
+		if (ias.size() < 1) {
+			return null;
+		}
 		InetAddress returnIa= null;
 		String nodeSize="0";
 		String peerNodeSize = "0";

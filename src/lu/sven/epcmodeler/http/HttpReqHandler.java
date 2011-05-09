@@ -9,6 +9,7 @@ import lu.sven.epcmodeler.EPCModeler;
 import lu.sven.epcmodeler.graph.Edge;
 import lu.sven.epcmodeler.graph.Node;
 import lu.sven.epcmodeler.util.NodeUtil;
+import lu.sven.epcmodeler.util.SaveGraph;
 import lu.sven.epcmodeler.util.Transformers;
 
 import org.apache.http.HttpEntity;
@@ -25,20 +26,23 @@ import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.io.GraphMLWriter;
 
 public class HttpReqHandler implements HttpRequestHandler {
 	Logger logger = Logger.getRootLogger();
 	Graph<Node,Edge> graph;
+	Layout<Node, Edge> layout;
 	
 	public HttpReqHandler() {
         super();
     }
     
-    public HttpReqHandler(Graph<Node,Edge> g) {
+    public HttpReqHandler(Graph<Node,Edge> g, Layout<Node, Edge> l) {
         super();
         this.graph = g;
+        this.layout = l;
     }
     
     public void handle(
@@ -70,11 +74,14 @@ public class HttpReqHandler implements HttpRequestHandler {
         	throw new NullPointerException("No graph defined!");
         }
         
+        SaveGraph saver = new SaveGraph(this.layout);
+        
         if(target.equals("/addNode")) {
         	Node n = new Node(postContent);
         	EPCModeler.receivedNodes.add(n);
         	if(!this.graph.getVertices().contains(n)) {
         		this.graph.addVertex(n);
+        		saver.save();
             	logger.debug("Node inserted");
         	}
         	response.setStatusCode(HttpStatus.SC_OK);
@@ -91,6 +98,7 @@ public class HttpReqHandler implements HttpRequestHandler {
             	EPCModeler.receivedEdges.add(e);
             	if(!this.graph.getEdges().contains(e)) {
             		this.graph.addEdge(e, NodeUtil.getNodeById(e.source, this.graph), NodeUtil.getNodeById(e.dest, this.graph));
+            		saver.save();
                 	logger.debug("Edge inserted");
             	}
             	
@@ -105,7 +113,7 @@ public class HttpReqHandler implements HttpRequestHandler {
                 });
         } else if(target.equals("/rmNode")) {
         	this.graph.removeVertex(new Node(postContent));
-        	
+        	saver.save();
         	response.setStatusCode(HttpStatus.SC_OK);
             // generate output
             body = new EntityTemplate(new ContentProducer() {
@@ -125,7 +133,7 @@ public class HttpReqHandler implements HttpRequestHandler {
         	}
         	
         	this.graph.addVertex(n);
-        	
+        	saver.save();
         	response.setStatusCode(HttpStatus.SC_OK);
             // generate output
             body = new EntityTemplate(new ContentProducer() {

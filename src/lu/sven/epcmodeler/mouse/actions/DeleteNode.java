@@ -24,6 +24,7 @@ public class DeleteNode extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		this.vv.getGraphLayout().getGraph().removeVertex(this.n);
 		EPCModeler.pushToPeers(n.toGML(), "/rmNode");
+		this.vv.repaint();
 	}
 }
 

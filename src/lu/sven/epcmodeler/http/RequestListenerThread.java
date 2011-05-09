@@ -26,6 +26,7 @@ import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.log4j.Logger;
 
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 
 public class RequestListenerThread extends Thread {
@@ -33,9 +34,11 @@ public class RequestListenerThread extends Thread {
     private final HttpParams params; 
     private final HttpService httpService;
     public Graph<Node,Edge> graph;
+    public Layout<Node, Edge> layout;
     
-    public RequestListenerThread(int port, Graph<Node, Edge> g) throws IOException {
+    public RequestListenerThread(int port, Graph<Node, Edge> g, Layout<Node, Edge> l) throws IOException {
     	this.graph = g;
+    	this.layout = l;
     	this.serversocket = new ServerSocket(port);
         this.params = new SyncBasicHttpParams();
         this.params
@@ -55,7 +58,7 @@ public class RequestListenerThread extends Thread {
         
         // Set up request handlers
         HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
-        reqistry.register("*", new HttpReqHandler(this.graph));
+        reqistry.register("*", new HttpReqHandler(this.graph, this.layout));
         
         // Set up the HTTP service
         this.httpService = new HttpService(

@@ -10,6 +10,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import lu.sven.epcmodeler.EPCModeler;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,7 +23,7 @@ import org.apache.log4j.Logger;
 
 public class HTTPClient {
 	public String hostname = "localhost";
-	public Integer port = 1337;
+	public Integer port = EPCModeler.port;
 	private static Logger logger = Logger.getRootLogger();
 	private String responseString;
 	
